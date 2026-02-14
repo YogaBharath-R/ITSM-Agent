@@ -66,11 +66,34 @@ st.title("🎫 ITSM Ticket Orchestrator")
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    user_input = st.text_area(
-        "Enter Logs / Incident Details",
-        height=150,
-        placeholder="Paste logs or describe incident..."
+    st.markdown("### 📧 Email Interface")
+    
+    # Email-style input fields
+    email_from = st.text_input(
+        "From:",
+        placeholder="ntid@itsm.com"
     )
+    email_to = st.text_input(
+        "To:",
+        value="support@itsm.com",
+        placeholder="support@itsm.com"
+    )
+    
+    email_subject = st.text_input(
+        "Subject:",
+        placeholder="Brief description of the incident..."
+    )
+    
+    email_body = st.text_area(
+        "Body:",
+        height=200,
+        placeholder="Describe the incident in detail...\n\nInclude:\n- What happened\n- When it occurred\n- Error messages or logs\n- Impact on users/systems"
+    )
+    
+    # Combine email fields into user_input for processing
+    user_input = f"""reported by {email_from} Subject: {email_subject}
+
+{email_body}"""
 
 with col2:
     st.markdown("### 🤖 Agent Team")
@@ -86,7 +109,7 @@ with col2:
 # ---------------------------------
 if st.button("🚀 Run Agent", type="primary", use_container_width=True):
 
-    if not user_input.strip():
+    if not email_subject.strip() and not email_body.strip():
         st.warning("⚠️ Please enter incident details")
         st.stop()
 
@@ -123,6 +146,7 @@ if st.button("🚀 Run Agent", type="primary", use_container_width=True):
             event = response_chunk.event
             content = response_chunk.content
             run_id = response_chunk.run_id
+            
 
             # ---------------------------------
             # RUN STARTED
